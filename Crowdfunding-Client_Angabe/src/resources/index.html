@@ -1,0 +1,160 @@
+ 	<!DOCTYPE html>
+<html lang="de" ng-app="crowdfunding">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Crowdfunding</title>
+  
+  <link rel="stylesheet" href="vendor/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="vendor/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <script src="vendor/angularjs/1.4.8/angular.min.js"></script>
+  <script src="vendor/angularjs/1.4.8/i18n/angular-locale_de-de.js"></script>
+  
+  <script src="app.js"></script>
+  <script src="controller.js"></script>
+  <script src="restservice.js"></script>
+  <script src="filechooser.js"></script>
+</head>
+
+<body ng-controller="CrowdfundingController">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header"><span class="navbar-brand">Crowdfunding</span></div>
+      
+      <!-- Kann alle darin enthaltenen Steuer- und Eingabeelemente gleichzeitig sperren -->
+      <fieldset ng-disabled="!neuerBet">
+      
+        <ul class="nav navbar-nav navbar-right">
+        
+          <!-- Sortierung festlegen -->
+          <li>
+            <div class="btn-group">
+              <button class="btn btn-default navbar-btn" title="Nach Beteiligungen sortieren" ng-click="findByDatum()">
+                <span class="glyphicon glyphicon-user"></span>
+              </button>
+              <button class="btn btn-default navbar-btn" title="Nach Projekten sortieren">
+                <span class="glyphicon glyphicon-briefcase"></span>
+              </button>
+            </div>
+          </li>
+  
+          <!-- Navigationsbuttons -->        
+          <li>
+            <h4>
+              <div class="btn-group">
+                <button class="btn btn-default" title="Zur ersten Seite" ng-click="geheZu('erste')" ng-disabled="!seite.vorige">
+                  <span class="glyphicon glyphicon-fast-backward"></span>
+                </button>
+        
+                <button class="btn btn-default" title="Zur vorigen Seite" ng-click="geheZu('vorige')" ng-disabled="!seite.vorige">
+                  <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+              </div>
+              
+              <span>{{seite.page.number+1}}/{{seite.page.totalPages}}</span>
+      
+              <div class="btn-group">
+                <button class="btn btn-default" title="Zur nächsten Seite" ng-click="geheZu('naechste')" ng-disabled="!seite.naechste">
+                  <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+        
+                <button class="btn btn-default" title="Zur letzten Seite" ng-click="geheZu('letzte')" ng-disabled="!seite.naechste">
+                  <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+              </div>
+            </h4>
+          </li>
+          
+          <!-- Zeigt das Formular für eine neue Beteiligung -->
+          <li>
+            <h4>
+              <button class="btn btn-primary" title="Sich an einem Projekt beteiligen" ng-click="neueBeteiligung()">
+                <span class="glyphicon glyphicon-eur"></span>
+              </button>
+            </h4>
+          </li>
+        </ul>
+      </fieldset>
+
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="alert alert-danger" ng-show="fehler">
+      <div>Fehler {{ fehler.status }}: {{ fehler.statusText }}</div>
+      <ul>
+        <li ng-repeat="text in fehler.fehlerTexte">{{ text }}</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <form name="formular" class="container" novalidate>
+    <table class="beteiligungen table table-striped table-condensed">
+
+      <thead>
+        <!-- Spaltenüberschriften für die Tabelle -->
+        <tr>
+          <th colspan="2">Projekt</th>
+          <th>Ziel</th>
+          <th>Sponsor</th>
+          <th>Betrag</th>
+          <th class="buttons"></th>
+        </tr>
+      </thead>
+      
+      
+      <tbody>
+        <!-- Neue Beteiligung -->
+        <tr ng-hide="neuerBet">
+        <form name="form_neuerBet">
+          <td></td>
+          <td>
+            <select class="form-control" title="Laufendes Projekt zur Beteiligung auswählen" required ng-model="neueBeschreibung">
+              <option ng-repeat="satz in seitenAll.saetze" value="{{ satz.inhalt.beschreibung }}">{{ satz.inhalt.beschreibung }}</option>
+            </select>
+          </td>
+          <td></td>
+          <td>
+            <input type="text" class="form-control" placeholder="Ihr Sponsorname" required ng-model="neuerSponsor">
+          </td>
+          <td>
+            <input type="number" class="form-control" required Min=1 ng-model="neuerBetrag">
+          </td>
+          <td class="buttons">
+            <button class="btn btn-warning" ng-click="beenden()">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button class="btn btn-success" ng-click="speichern(satz)">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+          </td>
+         </form>
+        </tr>
+      
+        <!-- Je eine Beteiligung pro Tabellenzeile -->
+        <tr ng-repeat="satz in seite.saetze">
+          <td><img ng-src="{{satz.inhalt._embedded.projekt.grafik || 'leer.jpg'}}"></td>
+          <td><span ng-bind="satz.inhalt._embedded.projekt.beschreibung"></span></td>
+          <td class="text-center">
+            <div class="nicht-erreicht"">
+              <span ng-bind="satz.inhalt.bisherBetrag"></span> von <span ng-bind="satz.inhalt._embedded.projekt.zielBetrag"></span>
+            </div>
+            <div>
+              noch <span ng-bind="satz.inhalt._embedded.projekt.restLaufzeit"></span> Tage
+            </div>
+          </td>
+          <td class="text-center"><span ng-bind="satz.inhalt.sponsor"></span></td>
+          <td class="text-right"><span ng-bind="satz.inhalt.betrag"></span></td>
+          <th class="buttons"></th>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+</body>
+</html>

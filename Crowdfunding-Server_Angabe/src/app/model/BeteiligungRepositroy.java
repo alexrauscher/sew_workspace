@@ -12,7 +12,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 	)
 public interface BeteiligungRepositroy extends PagingAndSortingRepository<Beteiligung, Long>{
 
-	public Page<Beteiligung> findByOrderByDatumAsc(Pageable p);
+	public Page<Beteiligung> findByOrderByDatumDesc(Pageable p);
 	
 	public Page<Beteiligung> findByOrderByProjektAscDatumDesc(Pageable p);
 }

@@ -1,0 +1,67 @@
+/******************************************************************************
+ **                                                                          **
+ **        In dieser Datei sollten keine Änderungen notwendig sein!!         **
+ **                                                                          **
+ *****************************************************************************/
+
+body {
+	padding-top: 4.5em;	
+}
+
+.navbar-right {
+	margin-right: 0;
+}
+
+.navbar li h4 {
+	margin-top: 0.45em;
+}
+
+.navbar-nav > li {
+	margin-left: 1em;
+}
+
+.beteiligungen thead > tr > th {
+	text-align: center;
+	vertical-align: top;
+}
+
+.beteiligungen td img {
+	width: 50px;
+	min-height: 50px;
+}
+
+.beteiligungen td .numerisch {
+	text-align: right;
+}
+
+.beteiligungen td.buttons,
+.beteiligungen th.buttons {
+	width: 9em;
+	text-align: right;
+}
+
+.beteiligungen td .btn {
+	display: inline-block;
+	margin: 0 0 0 0.2em;
+}
+
+.beteiligungen td .nicht-erreicht {
+	color: red;
+}
+
+.beteiligungen td .erreicht {
+	color: green;
+}
+
+.beteiligungen td:nth-child(1) {
+	width: 50px;	
+}
+
+.beteiligungen td:nth-child(3),
+.beteiligungen td:nth-child(4) {
+	width: 20%;
+}
+
+.beteiligungen td:nth-child(5) {
+	width: 15%;
+}
