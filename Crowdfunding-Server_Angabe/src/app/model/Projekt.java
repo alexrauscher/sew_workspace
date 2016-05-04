@@ -9,22 +9,31 @@ import javax.persistence.Lob;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 public class Projekt extends Persistent{
 	
 	@Pattern(regexp = ".{0,250}")
+	@NotNull
+	@NotBlank
+	@Column(unique = true, updatable = false)
 	private String beschreibung;
 	
 	@Lob
 	private String grafik;
 	
+	@NotNull
+	@Min(1000)
 	private Integer zielBetrag;
 	
 	@Temporal(TemporalType.TIMESTAMP)
+	@NotNull
 	private Date ende;
 	
 	@Formula("timestampdiff('day', now(), ende)")

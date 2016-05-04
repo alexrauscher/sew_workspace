@@ -5,24 +5,36 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.annotations.Formula;
+import org.hibernate.validator.constraints.NotBlank;
 
 import app.model.Projekt;
 
 @Entity
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "sponsor", "projekt" }))
 public class Beteiligung extends Persistent{
 	
 	@Pattern(regexp = ".{0,250}")
+	@NotNull
+	@NotBlank
+	@Column(updatable = false)
 	private String sponsor;
 
 	@ManyToOne
+	@NotNull
 	private Projekt projekt;
 	
+	@NotNull
+	@Min(1)
 	private Integer betrag;
 	
 	@Temporal(TemporalType.TIMESTAMP)

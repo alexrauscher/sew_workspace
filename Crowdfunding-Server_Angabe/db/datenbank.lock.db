@@ -1,6 +1,6 @@
 #FileLock
-#Tue May 03 19:33:00 CEST 2016
-hostName=Alexus-PC
-id=15477ae16d24ad25591e5b0369de570d1c4c3a70b8d
+#Wed May 04 13:00:12 CEST 2016
+hostName=DESKTOP-I7TQAM6
+id=1547b6cc41ea5378d33a099543b747efaf13d2b81c8
 method=file
-server=192.168.0.24\:56613
+server=192.168.56.1\:59181
