@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de" ng-app="biblioApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Biblio 5CI</title>
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./style.css">
+  
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.min.js"></script>
+  <script src="./app.js"></script>
+  <script src="./restservice.js"></script>
+  <script src="./controllers.js"></script>
+  <script src="./filechooser.js"></script>
+</head>
+
+<body ng-controller="LoginController">
+
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container" ng-class="{ 'disable-all': inBearbeitung }">
+      <div class="navbar-header">
+        <span class="navbar-brand">Biblio</span>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <button class="btn btn-primary navbar-btn login"
+            ng-hide="angemeldet || login"
+            ng-click="anmeldeDialog()">
+            <span class="glyphicon glyphicon-log-in"></span>
+          </button>
+          
+          <button class="btn btn-primary navbar-btn login"
+            ng-show="angemeldet"
+            ng-click="abmelden()">
+            {{ angemeldet }}&nbsp;&nbsp;
+            <span class="glyphicon glyphicon-log-out"></span>
+          </button>               
+        </li>
+
+        <li ng-show="login">
+          <form name="loginForm" class="form-inline" novalidate>
+            <input type="text" class="form-control login" placeholder="Benutzername"
+              required ng-model="login.name">
+            <input type="password" class="form-control" placeholder="Passwort"
+              required ng-model="login.passwort">
+            <button class="btn btn-warning navbar-btn"
+              ng-click="abmelden()">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button class="btn btn-success navbar-btn"
+              ng-disabled="loginForm.$invalid"
+              ng-click="anmelden()">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>          
+          </form>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="alert alert-danger" role="alert" ng-show="fehler">
+      <div>Fehler {{ fehler.status }}: {{ fehler.statusText }}</div>
+      <ul>
+        <li ng-repeat="text in fehler.fehlerTexte">{{ text }}</li>
+      </ul>
+    </div>
+
+    <div ng-view></div>
+  </div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

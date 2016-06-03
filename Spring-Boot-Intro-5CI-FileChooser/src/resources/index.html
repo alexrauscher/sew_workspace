@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de" ng-app="biblioApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Biblio 5CI</title>
+  
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./style.css">
+  
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+  <script src="./app.js"></script>
+  <script src="./services.js"></script>
+  <script src="./controllers.js"></script>
+  <script src="./filechooser.js"></script>
+</head>
+
+<body ng-controller="BiblioController">
+
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <span class="navbar-brand">Biblio</span>
+      </div>
+
+      <button class="btn btn-default navbar-btn" type="submit" 
+        ng-click="voriges()" ng-disabled="!satz.voriger">
+        <span class="glyphicon glyphicon-triangle-left"></span>
+      </button>
+      
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <button class="btn btn-default navbar-btn" type="submit" 
+            ng-click="naechstes()" ng-disabled="!satz.naechster">
+            <span class="glyphicon glyphicon-triangle-right"></span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <form name="formular" class="container">
+    <h1 class="text-center" ng-show="satz.page">Buch <small>{{ satz.page.number+1 }}/{{ satz.page.totalElements+0 }}</small></h1>
+    <h1 class="text-center" ng-show="!satz.page">Neues Buch</h1>
+
+    <div class="alert alert-danger" role="alert" ng-show="fehler">
+      <div>Fehler {{ fehler.status }}: {{ fehler.statusText }}</div>
+      <ul>
+        <li ng-repeat="text in fehler.fehlerTexte">{{ text }}</li>
+      </ul>
+    </div>
+    
+    <div class="form-group">
+      <label for="name">Titel</label>
+      <input type="text" class="form-control" id="name" ng-model="satz.inhalt.titel" required pattern="\s*(\S+\s*)+">
+    </div>
+
+    <div class="form-group">
+      <label for="autor">Autor</label>
+      <input type="text" class="form-control" id="autor" ng-model="satz.inhalt.autor" placeholder="Vor- und Nachname" required pattern="\s*(\S+\s*)+">
+    </div>
+
+    <div class="form-group">
+      <label for="ausgabe">Ausgabe</label>
+      <select class="form-control" id="ausgabe" ng-model="satz.inhalt.ausgabe" required>
+        <option value="SOFTCOVER">Taschenbuch</option>
+        <option value="HARDCOVER">Gebundene Ausgabe</option>
+        <option value="EBOOK">E-Book</option>
+        <option value="HOERBUCH">Hörbuch</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="erschienen">Erschienen</label>
+      <input type="date" class="form-control" id="erschienen" ng-model="satz.inhalt.erschienen" placeholder="TT.MM.JJJJ">
+    </div>
+
+    <div class="form-group">
+      <label for="seiten">Seiten</label>
+      <input type="number" class="form-control" id="seiten" ng-model="satz.inhalt.seiten" min1="1">
+    </div>
+
+    <div class="form-group">
+      <label for="kurzfassung">Kurzfassung</label>
+      <textarea rows="3" class="form-control" id="kurzfassung" ng-model="satz.inhalt.kurzfassung"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="cover">Bild</label>
+      <div id="cover" file-chooser ng-model="satz.inhalt.cover" accept="image/*">
+        <img ng-src="{{ satz.inhalt.cover }}" ng-show="satz.inhalt.cover">
+        <button class="btn btn-default" file-select>Ändern...</button>
+        <button class="btn btn-success" file-download="buch-cover" ng-show="satz.inhalt.cover">Download</button>
+        <button class="btn btn-danger" file-unselect ng-show="satz.inhalt.cover">Entfernen</button>
+      </div>
+    </div>
+    
+    <div>
+      <button class="btn btn-primary" ng-show="!formular.$dirty &amp;&amp; satz.page" ng-click="neues()">Neu...</button>
+      <button class="btn btn-success" ng-show="!satz.page || formular.$dirty" ng-disabled="!formular.$valid" ng-click="speichern()">Speichern</button>
+      <button class="btn btn-danger" ng-show="satz.entfernen &amp;&amp; !formular.$dirty" ng-click="entfernen()">Entfernen</button>
+      <button class="btn btn-default" ng-show="!satz.page || formular.$dirty" ng-click="abbrechen()">Abbrechen</button>
+    </div>
+  </form>
+
+</body>
+</html>

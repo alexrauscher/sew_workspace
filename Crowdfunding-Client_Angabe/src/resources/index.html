@@ -115,6 +115,7 @@
           <td></td>
           <td>
             <select class="form-control" title="Laufendes Projekt zur Beteiligung auswählen" required ng-model="neueBeschreibung">
+              <option>An laufendem Projekt beteiligen...</option>
               <option ng-repeat="satz in seitenAll.saetze" value="{{ satz.inhalt.beschreibung }}">{{ satz.inhalt.beschreibung }}</option>
             </select>
           </td>
@@ -123,13 +124,13 @@
             <input type="text" class="form-control" placeholder="Ihr Sponsorname" required ng-model="neuerSponsor">
           </td>
           <td>
-            <input type="number" class="form-control" required Min=1 ng-model="neuerBetrag">
+            <input type="number" class="form-control" placeholder="Betrag (mind. 1)" required Min=1 ng-model="neuerBetrag">
           </td>
           <td class="buttons">
             <button class="btn btn-warning" ng-click="beenden()">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <button class="btn btn-success" ng-click="speichern(satz)">
+            <button class="btn btn-success" ng-click="speichern(neueBeschreibung, neuerSponsor, neuerBetrag)">
               <span class="glyphicon glyphicon-ok"></span>
             </button>
           </td>
@@ -145,7 +146,8 @@
               <span ng-bind="satz.inhalt.bisherBetrag"></span> von <span ng-bind="satz.inhalt._embedded.projekt.zielBetrag"></span>
             </div>
             <div>
-              noch <span ng-bind="satz.inhalt._embedded.projekt.restLaufzeit"></span> Tage
+            	<span ng-if="satz.inhalt._embedded.projekt.restLaufzeit <= 0">beended</span>
+               <span ng-if="satz.inhalt._embedded.projekt.restLaufzeit > 0">noch {{ satz.inhalt._embedded.projekt.restLaufzeit }}  Tage</span>
             </div>
           </td>
           <td class="text-center"><span ng-bind="satz.inhalt.sponsor"></span></td>

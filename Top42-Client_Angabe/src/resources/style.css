@@ -1,0 +1,78 @@
+/******************************************************************************
+ **                                                                          **
+ **        In dieser Datei sollten keine Änderungen notwendig sein!!         **
+ **                                                                          **
+ *****************************************************************************/
+
+body {
+	padding-top: 4.5em;	
+}
+
+.navbar-right {
+	margin-right: 0;
+}
+
+.navbar .form-inline .input-group {
+	margin-top: 0.55em;
+}
+
+.navbar .form-inline h4 {
+	margin-top: 0.45em;
+}
+
+.navbar-nav > li {
+	margin-left: 1em;
+}
+
+.charts thead > tr > th {
+	text-align: center;
+	vertical-align: top;
+}
+
+.charts td img {
+	width: 50px;
+	min-height: 50px;
+}
+
+.charts td .numerisch {
+	text-align: right;
+}
+
+.charts td.buttons,
+.charts th.buttons {
+	width: 4em;
+	text-align: center;
+}
+
+.charts td img,
+.charts td img + div {
+	display: block;
+	float: left;
+	margin-left: 1em;
+}
+
+.charts td .btn {
+	display: block;
+	margin: 0 auto;
+}
+
+.charts td .btn + .btn {
+	margin-top: 0.3em;
+}
+
+.charts th:nth-child(1),
+.charts td:nth-child(1) {
+	width1: 80px;
+}
+
+.charts th:nth-child(2),
+.charts td:nth-child(2),
+.charts th:nth-child(3),
+.charts td:nth-child(3) {
+	width: 25%;
+}
+
+.charts th:nth-child(4),
+.charts td:nth-child(4) {
+	width: 20%;
+}

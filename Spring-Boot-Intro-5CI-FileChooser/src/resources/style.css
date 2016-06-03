@@ -1,0 +1,8 @@
+.navbar-fixed-top + * {
+	margin-top: 70px;
+}
+
+/* Bug in Bootstrap 3.3.x */
+.navbar-right {
+	margin-right: 0;
+}

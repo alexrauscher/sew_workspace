@@ -1,0 +1,72 @@
+<table class="table table-striped table-condensed" ng-controller="ListeController">
+  <thead>
+    <!-- Navigation -->
+    <tr>
+      <td colspan="4">
+        <button class="btn btn-default"
+          ng-click="geheZu('erste')" ng-disabled="!seite.vorige">
+          <span class="glyphicon glyphicon-fast-backward"></span>
+        </button>
+        
+        <button class="btn btn-default"
+          ng-click="geheZu('vorige')" ng-disabled="!seite.vorige">
+          <span class="glyphicon glyphicon-triangle-left"></span>
+        </button>
+        
+        <span class="position">
+          Seite {{ seite.page.number+1 }} von {{ seite.page.totalPages }}
+        </span>
+        
+        <button class="btn btn-default"
+          ng-click="geheZu('naechste')" ng-disabled="!seite.naechste">
+          <span class="glyphicon glyphicon-triangle-right"></span>
+        </button>
+        
+        <button class="btn btn-default"
+          ng-click="geheZu('letzte')" ng-disabled="!seite.naechste">
+          <span class="glyphicon glyphicon-fast-forward"></span>
+        </button>
+        <td>
+    </tr>
+    
+    <tr>
+      <th>Titel</th>
+      <th>Cover</th>
+      <th>Autoren</th>
+      <th>Bearbeiter</th>
+      <th></th>
+    </tr>
+  </thead>
+  
+  <tbody>
+    <tr ng-repeat="satz in seite.saetze">
+      <td>
+        <a href="#/details/{{ id(satz) }}&{{ satz.inhalt.titel}}&{{ satz.inhalt.seiten}}&{{ satz.inhalt.kurzfassung}}&{{ satz.inhalt._embedded.autoren[0].name}}" ng-hide="satz === inBearbeitung" ng-bind="satz.inhalt.titel"></a>
+        <form name="formular" ng-show="satz === inBearbeitung">
+          <input type="text" required ng-model="satz.titel">
+        </form>
+      </td>
+      <td><img ng-src="{{ satz.inhalt.cover || 'kein-bild.png' }}"></td>
+      <td>
+        <span class="autor" ng-repeat="autor in satz.inhalt._embedded.autoren">{{ autor.name }}</span>
+      </td>
+      <td>
+        <div>{{ satz.inhalt.bearbeiter.name }}</div>
+      <td>
+        <button class="btn btn-danger" ng-click="entfernen(satz)" ng-show="!inBearbeitung">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        <button class="btn btn-success" ng-click="bearbeiten(satz)" ng-show="!inBearbeitung">
+          <span class="glyphicon glyphicon-pencil"></span>
+        </button>
+        
+        <button class="btn btn-primary" ng-click="speichern()" ng-show="satz === inBearbeitung">
+          <span class="glyphicon glyphicon-ok"></span>
+        </button>
+        <button class="btn btn-warning" ng-click="beenden()" ng-show="satz === inBearbeitung">
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>  

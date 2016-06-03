@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de" ng-app="top42">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Top 42</title>
+  
+  <link rel="stylesheet" href="vendor/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="vendor/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <script src="vendor/angularjs/1.4.8/angular.min.js"></script>
+  
+  <script src="app.js"></script>
+  <script src="controller.js"></script>
+  <script src="restservice.js"></script>
+  <script src="filechooser.js"></script>
+</head>
+
+<body ng-controller="ListController">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header"><span class="navbar-brand">Top 42</span></div>
+      
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Sortierung festlegen -->
+        <li>
+          <div class="btn-group">
+            <button ng-class="classTitel" ng-model="btnTitel" disabled="false" title="Nach Titeln sortieren" ng-click="findBy('titel', suchtext)">
+              <span class="glyphicon glyphicon-music"></span>
+            </button>
+            <button ng-class="classZustimmung" title="Nach Bewertung sortieren" ng-click="findBy('zustimmung', suchtext)">
+              <span class="glyphicon glyphicon-heart"></span>
+            </button>
+          </div>
+        </li>
+
+        <!-- Zeigt nur Songs, deren Titel den Suchbegriff enthalten -->
+        <li class="form-inline">
+          <form name="suchen" novalidate>
+            <div class="input-group" style="width: 100%">
+              <input type="text" class="form-control" style="width: 100%" placeholder="Suchen nach &hellip;" 
+                  title="Nur Songs mit diesem Suchbegriff zeigen"
+                  ng-model="suchtext"
+                  ng-change="titelSuchen(suchtext)">
+              <span class="input-group-btn">
+                <button class="btn btn-default" title="Suchbegriff löschen" ng-click="getSongs()">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </span>
+            </div>
+          </form>
+        </li>
+
+        <!-- Navigationsbuttons -->        
+        <li class="form-inline">
+          <h4 class="form-group">
+            <div class="btn-group">
+              <button class="btn btn-default" title="Zur ersten Seite" ng-click="geheZu('erste')" ng-disabled="!seite.vorige">
+                <span class="glyphicon glyphicon-fast-backward"></span>
+              </button>
+      
+              <button class="btn btn-default" title="Zur vorigen Seite" ng-click="geheZu('vorige')" ng-disabled="!seite.vorige">
+                <span class="glyphicon glyphicon-step-backward"></span>
+              </button>
+            </div>
+            
+            <span>{{ seite.page.number+1 }}/{{ seite.page.totalPages }}</span>
+    
+            <div class="btn-group">
+              <button class="btn btn-default" title="Zur nächsten Seite" ng-click="geheZu('naechste')" ng-disabled="!seite.naechste">
+                <span class="glyphicon glyphicon-step-forward"></span>
+              </button>
+      
+              <button class="btn btn-default" title="Zur letzten Seite" ng-click="geheZu('letzte')" ng-disabled="!seite.naechste">
+                <span class="glyphicon glyphicon-fast-forward"></span>
+              </button>
+            </div>
+          </h4>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="alert alert-danger" ng-show="fehler">
+      <div>Fehler {{ fehler.status }}: {{ fehler.statusText }}</div>
+      <ul>
+        <li ng-repeat="text in fehler.fehlerTexte">{{ text }}</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <table class="charts table table-striped table-condensed">
+
+      <thead>
+        <!-- Spaltenüberschriften für die Tabelle -->
+        <tr>
+          <th>Cover</th>
+          <th>Interpret</th>
+          <th>Titel</th>
+          <th>Zustimmung</th>
+          <th class="buttons">Bewerten</th>
+        </tr>
+      </thead>
+      
+      
+      <tbody>
+      
+        <!-- Je ein Song pro Tabellenzeile -->
+        <tr ng-repeat="satz in seite.saetze">
+          <!-- Coverbild mit Buttons zum Ändern -->
+          <td class="buttons">                    	
+          	<div file-chooser ng-model="satz.inhalt.cover" accept="image/*">
+          		<img src="leer.jpg" ng-hide="satz.inhalt.cover">
+		        <img ng-src="{{ satz.inhalt.cover}}" ng-show="satz.inhalt.cover">
+		        <button class="btn btn-xs btn-primary" title="Coverbild ändern" file-select ng-click="bearbeiten(satz)" ng-hide="satz === inBearbeitung">
+		        	<span class="glyphicon glyphicon-picture"></span>
+		        </button>
+	        	<button class="btn btn-xs btn-success" ng-click="speichern(satz)" ng-show="satz === inBearbeitung">
+	        		<span class="glyphicon glyphicon-floppy-disk"></span>
+	        	</button>
+		        <button class="btn btn-xs btn-warning" file-unselect ng-click="bearbeiten(satz)" ng-hide="satz === inBearbeitung">
+		        	<span class="glyphicon glyphicon-trash"></span>
+		        </button>		  			  
+	        </div>
+          </td>
+          
+          <td>{{ satz.inhalt._embedded.interpret.name }}</td>
+          
+          <td>{{ satz.inhalt.titel }}</td>
+          
+          <td class="text-center">{{ satz.inhalt.zustimmung }}%</td>
+          
+          <!-- Bewertungs-Buttons -->
+          <td class="buttons">
+            <div>
+              <button class="btn btn-xs btn-success" title="Positiv bewerten" ng-click="satzAendern(satz, 'true')">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+              </button>
+
+              <button class="btn btn-xs btn-danger" title="Negativ bewerten" ng-click="satzAendern(satz, 'false')">
+                <span class="glyphicon glyphicon-thumbs-down"></span>
+              </button>
+            </div>
+          </td>
+  
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

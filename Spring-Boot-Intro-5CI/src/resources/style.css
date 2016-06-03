@@ -1,0 +1,45 @@
+.navbar-fixed-top + * {
+	margin-top: 70px;
+}
+
+/* Bug in Bootstrap 3.3.x */
+.navbar-right {
+	margin-right: 0;
+}
+
+.navbar-right .login {
+	margin-left: 2em;
+}
+
+td:nth-child(1),
+th:nth-child(1) {
+	width: 30%;
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+	width: 50%;
+}
+
+th {
+	text-align: center;
+}
+
+td img {
+	max-height: 5em;
+	display: block;
+	margin: 0 auto;
+}
+
+td .btn {
+	margin-bottom: 3px;
+}
+
+.autor + .autor::before {
+	content: ', ';
+}
+
+.disable-all {
+	pointer-events:none;
+	opacity: 0.5;
+}

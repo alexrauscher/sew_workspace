@@ -1,0 +1,78 @@
+/******************************************************************************
+ **                                                                          **
+ **        In dieser Datei sollten keine Änderungen notwendig sein!!         **
+ **                                                                          **
+ *****************************************************************************/
+
+body {
+	padding-top: 4.5em;	
+}
+
+.navbar-right {
+	margin-right: 0;
+}
+
+.navbar .form-inline .input-group {
+	margin-top: 0.55em;
+	width: 13em;
+}
+
+.navbar li h4 {
+	margin-top: 0.45em;
+}
+
+.navbar .position {
+	display: inline-block;
+	width: 5em;
+	text-align: center;	
+}
+
+.navbar .unsichtbar {
+	visibility: hidden;
+}
+
+.navbar-nav > li {
+	margin-left: 1em;
+}
+
+.reisen thead > tr > th {
+	text-align: center;
+	vertical-align: top;
+}
+
+.reisen td img {
+	width: 160px;
+	min-height: 120px;
+}
+
+.reisen td.buttons,
+.reisen th.buttons {
+	width: 9em;
+	text-align: right;
+}
+
+.reisen td .btn {
+	display: inline-block;
+	margin: 0 0 0.5em 0.2em;
+}
+
+.reisen td .nicht-erreicht {
+	color: red;
+}
+
+.reisen td .erreicht {
+	color: green;
+}
+
+.reisen td:nth-child(1) {
+	width: 160px;	
+}
+
+.reisen td:nth-child(3),
+.reisen td:nth-child(4) {
+	width: 20%;
+}
+
+.reisen td:nth-child(5) {
+	width: 15%;
+}

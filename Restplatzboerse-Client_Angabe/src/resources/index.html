@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de" ng-app="restplatzboerse">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Restplatzbörse</title>
+  
+  <link rel="stylesheet" href="vendor/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  
+  <script src="vendor/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <script src="vendor/angularjs/1.4.8/angular.min.js"></script>
+  <script src="vendor/angularjs/1.4.8/i18n/angular-locale_de-de.js"></script>
+  
+  <script src="app.js"></script>
+  <script src="controller.js"></script>
+  <script src="restservice.js"></script>
+</head>
+
+<body ng-controller="RestplatzController">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header"><span class="navbar-brand">Restplatzbörse</span></div>
+      
+      <!-- Kann alle darin enthaltenen Steuer- und Eingabeelemente gleichzeitig sperren -->
+      <fieldset ng-disabled="inBearbeitung">
+      
+        <ul class="nav navbar-nav navbar-right">
+        
+          <!-- Filter festlegen -->
+          <li>
+            <div class="btn-group">
+              <button ng-class="classBuchbar" title="Nur buchbare Reisen zeigen" ng-click="sortieren('buchbar')">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+              <button ng-class="classAlle" title="Alle Reisen zeigen" ng-click="sortieren('alle')">
+                <span class="glyphicon glyphicon-flag"></span>
+              </button>
+            </div>
+          </li>
+  
+
+          <!-- Zeigt nur Reisen mit einer Mindestanzahl an freien Plätzen -->
+          <li class="form-inline">
+            <form name="suchen" novalidate>
+              <div class="input-group">
+                <input type="number" class="form-control" placeholder="Freie Plätze &hellip;" min="1"
+                    title="Nur Reisen mit mindestens so vielen freien Plätzen zeigen" ng-model="freiePlaetze" ng-change="sortBuchbar()" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" title="Filter löschen" ng-click="reset()">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                </span>
+              </div>
+            </form>
+          </li>
+  
+          <!-- Navigationsbuttons -->        
+          <li>
+            <h4>
+              <div class="btn-group">
+                <button class="btn btn-default" title="Zur ersten Seite" ng-click="geheZu('erste')" ng-disabled="!seite.vorige">
+                  <span class="glyphicon glyphicon-fast-backward"></span>
+                </button>
+        
+                <button class="btn btn-default" title="Zur vorigen Seite" ng-click="geheZu('vorige')" ng-disabled="!seite.vorige">
+                  <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+              </div>
+              
+              <span class="position">{{ seite.page.size*(seite.page.number)+1 }}&ndash;{{ seite.page.size*(seite.page.number+1) }}/{{ seite.page.totalPages }}</span>
+      
+              <div class="btn-group">
+                <button class="btn btn-default" title="Zur nächsten Seite" ng-click="geheZu('naechste')" ng-disabled="!seite.naechste">
+                  <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+        
+                <button class="btn btn-default" title="Zur letzten Seite" ng-click="geheZu('letzte')" ng-disabled="!seite.naechste">
+                  <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+              </div>
+            </h4>
+          </li>
+        </ul>
+      </fieldset>
+
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="alert alert-danger" ng-show="fehler">
+      <div>Fehler {{ fehler.status }}: {{ fehler.statusText }}</div>
+      <ul>
+        <li ng-repeat="text in fehler.fehlerTexte">{{ text }}</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <form name="formular" class="container" novalidate>
+    <table class="reisen table table-striped table-condensed">
+
+      <thead>
+        <!-- Spaltenüberschriften für die Tabelle -->
+        <tr>
+          <th colspan="2">Destination</th>
+          <th>Beginn</th>
+          <th>Dauer</th>
+          <th>Freie Plätze</th>
+          <th class="buttons"></th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <!-- Je eine Reise pro Tabellenzeile -->
+        <tr ng-repeat="satz in seite.saetze">
+          <td>
+            <h4>{{ satz.inhalt._embedded.destination.ort }}</h4>
+            <h4>{{ satz.inhalt._embedded.destination.land }}</h4>
+          </td>
+          <td><img ng-src="{{ satz.inhalt._embedded.destination.bild || leer.jpg }}"></td>
+          <td class="text-center">{{ satz.inhalt.beginn | date: 'dd.MM.yyyy' }}</td>
+          <td class="text-center">{{ satz.inhalt.dauer }} Tage</td>
+          <td>
+            <div class="text-center" ng-hide="satz === inBearbeitung">
+              {{ satz.inhalt.freiePlaetze }} 
+            </div>
+
+            <select class="form-control" title="Plätze eingeben, die gebucht werden sollen" ng-show="satz === inBearbeitung" ng-model="selected">
+              <option value="">Plätze wählen</option>
+              <option ng-repeat="auswahl in auswahl" ng-value="{{auswahl}}">{{auswahl}}</option>
+            </select>
+          </td>
+          
+          <!-- Buchungs-Buttons -->
+          <td class="buttons">
+            <button class="btn btn-primary" ng-click="bearbeiten(satz)" ng-hide="satz === inBearbeitung">
+              <span class="glyphicon glyphicon-plane"></span>
+            </button>
+            
+            <button class="btn btn-success" ng-show="satz === inBearbeitung" ng-click="speichern(satz, selected)">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-warning" ng-show="satz === inBearbeitung" ng-click="beenden()">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+</body>
+</html>

@@ -13,8 +13,14 @@ app.controller("CrowdfundingController", function($scope, RestService, $log) {
 			});
 	}
 	
-	$scope.speichern = function() {
-		
+	$scope.speichern = function(a,b,c) {
+		console.log(a,b,c);
+		var newSatz = RestService.neuerSatz("beteiligungen");
+		console.log(newSatz.inhalt.beschreibung = a);
+		console.log(newSatz.inhalt.sponsor = b);
+		console.log(newSatz.inhalt.betrag = c);
+		newSatz.speichern().then(seiteInsScope, fehlerInsScope);
+		$scope.neuerBet = true;
 	};
 	
 	$scope.geheZu = function(ziel){
